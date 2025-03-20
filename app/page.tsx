@@ -8,7 +8,7 @@ import { defineStepper } from "@/components/ui/stepper";
 import { MousePointerClick, Upload, ArrowLeft, ArrowRight } from "lucide-react";
 import ImportQuestionBank from "./_components/import-question-bank";
 import { initialData } from "@/config/data";
-import Test from "./_components/test";
+
 const {
   StepperProvider,
   StepperControls,
