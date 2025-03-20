@@ -3,6 +3,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 import "@/style/globals.css";
+import { FloatingMenu } from "@/components/floating-menu";
+import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/providers/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -89,7 +92,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body className={`${inter.className} antialiased`}>{children}</body>
+      <body className={`${inter.className} antialiased relative`}>
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <FloatingMenu />
+        </ThemeProvider>
+        <Toaster />
+      </body>
     </html>
   );
 }
