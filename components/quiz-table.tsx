@@ -42,7 +42,7 @@ export function QuizTable({
             answerD: String(item.answerD ?? ""),
             correctAnswer: String(item.correctAnswer ?? ""),
           }));
-          setData((prev: DataConfig["quiz"]) => [...prev, ...formattedData]);
+          setData(formattedData);
         }}
         className='self-end bg-emerald-400/30'
       />
@@ -51,16 +51,16 @@ export function QuizTable({
           <TableHeader>
             <TableRow className='bg-muted/50'>
               <TableHead className='flex items-center gap-1'>
-                <CircleHelp className='size-4 text-amber-500' />
                 Câu hỏi
+                <CircleHelp className='size-4 text-amber-500' />
               </TableHead>
               <TableHead>Đáp án 1</TableHead>
               <TableHead>Đáp án 2</TableHead>
               <TableHead>Đáp án 3</TableHead>
               <TableHead>Đáp án 4</TableHead>
               <TableHead className='flex items-center gap-1'>
-                <CircleCheck className='size-4 text-emerald-500' />
                 Đáp án đúng
+                <CircleCheck className='size-4 text-emerald-500' />
               </TableHead>
             </TableRow>
           </TableHeader>

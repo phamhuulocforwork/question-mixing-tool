@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button";
 import { defineStepper } from "@/components/ui/stepper";
 import { MousePointerClick, Upload, ArrowLeft, ArrowRight } from "lucide-react";
 import ImportQuestionBank from "./_components/import-question-bank";
-import { dataConfig } from "@/config/data";
-
+import { initialData } from "@/config/data";
+import Test from "./_components/test";
 const {
   StepperProvider,
   StepperControls,
@@ -33,7 +33,7 @@ const {
 );
 
 export default function Home() {
-  const [data, setData] = React.useState(dataConfig.quiz);
+  const [data, setData] = React.useState(initialData);
 
   return (
     <div className='flex w-full items-start my-16 justify-center'>

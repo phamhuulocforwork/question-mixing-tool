@@ -5,7 +5,6 @@ import { CommandList } from "cmdk";
 
 import { cn } from "@/lib/utils";
 import { useParseCsv } from "@/hooks/use-parse-csv";
-import { useUploadFile } from "@/hooks/use-upload-file";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -70,7 +69,6 @@ export function CsvImporter({
     onFieldsReset,
     getSanitizedData,
   } = useParseCsv({ fields });
-  const { onUpload, isUploading } = useUploadFile("csvUploader");
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -97,12 +95,10 @@ export function CsvImporter({
             onUpload={async (files) => {
               const file = files[0];
               if (!file) return;
-              await onUpload(files);
 
               onParse({ file, limit: 1001 });
               setStep("map");
             }}
-            disabled={isUploading}
           />
         </DialogContent>
       ) : (

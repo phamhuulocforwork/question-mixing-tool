@@ -1,3 +1,11 @@
-import { type ClientUploadedFileData } from "uploadthing/types"
+export type Quiz = {
+  id: string;
+  question: string;
+  answerA: string;
+  answerB: string;
+  answerC: string;
+  answerD: string;
+  correctAnswer: string;
+};
 
-export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}
+export type QuizList = Quiz[];
