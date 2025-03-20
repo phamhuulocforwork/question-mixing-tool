@@ -11,15 +11,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CsvImporter } from "@/components/csv-importer";
-import { type DataConfig } from "@/config/data";
 import { CircleCheck, CircleHelp } from "lucide-react";
+import { QuizList } from "@/types";
 
 export function QuizTable({
   data,
   setData,
 }: {
-  data: DataConfig["quiz"];
-  setData: React.Dispatch<React.SetStateAction<DataConfig["quiz"]>>;
+  data: QuizList;
+  setData: React.Dispatch<React.SetStateAction<QuizList>>;
 }) {
   return (
     <div className='flex flex-col gap-4'>
@@ -33,7 +33,7 @@ export function QuizTable({
           { label: "Đáp án đúng", value: "correctAnswer", required: true },
         ]}
         onImport={(parsedData) => {
-          const formattedData: DataConfig["quiz"] = parsedData.map((item) => ({
+          const formattedData: QuizList = parsedData.map((item) => ({
             id: crypto.randomUUID(),
             question: String(item.question ?? ""),
             answerA: String(item.answerA ?? ""),

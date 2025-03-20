@@ -1,11 +1,11 @@
 import { QuizTable } from "@/components/quiz-table";
-import { DataConfig } from "@/config/data";
+import { QuizList } from "@/types";
 export default function ImportQuestionBank({
   data,
   setData,
 }: {
-  data: DataConfig["quiz"];
-  setData: React.Dispatch<React.SetStateAction<DataConfig["quiz"]>>;
+  data: QuizList;
+  setData: React.Dispatch<React.SetStateAction<QuizList>>;
 }) {
   return (
     <div className='rounded-md shadow-xl border p-4'>
