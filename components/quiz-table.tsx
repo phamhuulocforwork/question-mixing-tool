@@ -14,14 +14,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { QuizList } from "@/types";
+import { QuestionList } from "@/types";
 
 export function QuizTable({
   data,
   setData,
 }: {
-  data: QuizList;
-  setData: React.Dispatch<React.SetStateAction<QuizList>>;
+  data: QuestionList;
+  setData: React.Dispatch<React.SetStateAction<QuestionList>>;
 }) {
   return (
     <div className='flex flex-col gap-4'>
@@ -35,7 +35,7 @@ export function QuizTable({
           { label: "Đáp án đúng", value: "correctAnswer", required: true },
         ]}
         onImport={(parsedData) => {
-          const formattedData: QuizList = parsedData.map((item) => ({
+          const formattedData: QuestionList = parsedData.map((item) => ({
             id: crypto.randomUUID(),
             question: String(item.question ?? ""),
             answerA: String(item.answerA ?? ""),
