@@ -1,6 +1,6 @@
-import { QuizList } from "@/types";
+import { QuestionList } from "@/types";
 
-export const initialData: QuizList = [
+export const initialData: QuestionList = [
   {
     id: crypto.randomUUID(),
     question: "Đâu là thủ đô của Pháp?",

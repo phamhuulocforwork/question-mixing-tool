@@ -1,19 +1,23 @@
 "use client";
 
 import * as React from "react";
+
 import Image from "next/image";
+
+import { FileTextIcon, UploadIcon, X } from "lucide-react";
 import Dropzone, {
   type DropzoneProps,
   type FileRejection,
 } from "react-dropzone";
+import { toast } from "sonner";
 
-import { cn, formatBytes } from "@/lib/utils";
-import { useControllableState } from "@/hooks/use-controllable-state";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "sonner";
-import { FileTextIcon, UploadIcon, X } from "lucide-react";
+
+import { cn, formatBytes } from "@/lib/utils";
+
+import { useControllableState } from "@/hooks/use-controllable-state";
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: File[];
@@ -52,12 +56,12 @@ export function FileUploader(props: FileUploaderProps) {
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFileCount === 1 && acceptedFiles.length > 1) {
-        toast.error("Cannot upload more than 1 file at a time");
+        toast.error("Không thể tải lên nhiều hơn 1 file một lượt");
         return;
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFileCount) {
-        toast.error(`Cannot upload more than ${maxFileCount} files`);
+        toast.error(`Không thể tải lên nhiều hơn ${maxFileCount} file`);
         return;
       }
 
@@ -73,7 +77,7 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
-          toast.error(`File ${file.name} was rejected`);
+          toast.error(`File ${file.name} bị từ chối`);
         });
       }
 
@@ -86,12 +90,12 @@ export function FileUploader(props: FileUploaderProps) {
           updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
 
         toast.promise(onUpload(updatedFiles), {
-          loading: `Uploading ${target}...`,
+          loading: `Đang tải lên ${target}...`,
           success: () => {
             setFiles([]);
-            return `${target} uploaded`;
+            return `${target} đã được tải lên`;
           },
-          error: `Failed to upload ${target}`,
+          error: `Không thể tải lên ${target}`,
         });
       }
     },
@@ -232,7 +236,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
           onClick={onRemove}
         >
           <X className='size-4' aria-hidden='true' />
-          <span className='sr-only'>Remove file</span>
+          <span className='sr-only'>Xóa file</span>
         </Button>
       </div>
     </div>

@@ -2,6 +2,9 @@
 
 import * as React from "react";
 
+import { CircleCheck, CircleHelp } from "lucide-react";
+
+import { CsvImporter } from "@/components/csv-importer";
 import {
   Table,
   TableBody,
@@ -10,8 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CsvImporter } from "@/components/csv-importer";
-import { CircleCheck, CircleHelp } from "lucide-react";
+
 import { QuizList } from "@/types";
 
 export function QuizTable({

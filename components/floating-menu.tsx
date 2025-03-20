@@ -1,13 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
-import { Separator } from "@/components/ui/separator";
+import { Github } from "lucide-react";
+
 import ThemeToggle from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import { Github } from "lucide-react";
-import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import UsageDrawer from "@/components/usage-drawer";
+
 const Menu = () => {
   return (
     <div className='pointer-events-none fixed inset-x-0 bottom-0 z-30 flex  overflow-hidden px-2 pb-1 duration-300 animate-in slide-in-from-bottom-12 lg:justify-center lg:p-4 lg:pb-4'>

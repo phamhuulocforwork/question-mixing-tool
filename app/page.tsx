@@ -2,12 +2,23 @@
 
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
+import {
+  ArrowLeft,
+  ArrowRight,
+  File,
+  // MousePointerClick,
+  Upload,
+  X,
+} from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { defineStepper } from "@/components/ui/stepper";
-import { MousePointerClick, Upload, ArrowLeft, ArrowRight } from "lucide-react";
-import ImportQuestionBank from "./_components/import-question-bank";
+
+// import QuestionOption from "./_components/question-option";
 import { initialData } from "@/config/data";
+
+import GenerateQuestions from "./_components/generate-questions";
+import ImportQuestionBank from "./_components/import-question-bank";
 
 const {
   StepperProvider,
@@ -24,11 +35,18 @@ const {
     description: "Tải lên bộ câu hỏi",
     icon: <Upload />,
   },
+  // {
+  //   id: "2",
+  //   title: "Tùy chọn",
+  //   description: "Tùy chọn thêm",
+  //   icon: <MousePointerClick />,
+  // },
   {
-    id: "2",
-    title: "Chọn câu hỏi",
-    description: "Chọn câu hỏi để trộn",
-    icon: <MousePointerClick />,
+    id: "3",
+    title: "Tạo đề, đáp án",
+    description: "Tạo đề, đáp án",
+    icon: <File />,
+    isLast: true,
   },
 );
 
@@ -38,13 +56,13 @@ export default function Home() {
   return (
     <div className='flex w-full items-start my-16 justify-center'>
       <div className='container flex flex-col items-center gap-4 justify-center'>
-        <h1 className='text-2xl font-bold uppercase'>
+        <h1 className='text-2xl mb-8 text-center font-bold uppercase'>
           CÔNG CỤ TRỘN CÂU HỎI TRẮC NGHIỆM, TẠO ĐỀ THI
         </h1>
         <StepperProvider className='space-y-4' variant='horizontal'>
           {({ methods }) => (
             <React.Fragment>
-              <StepperNavigation>
+              <StepperNavigation className='mx-0 lg:mx-16'>
                 {methods.all.map((step) => (
                   <StepperStep
                     key={step.id}
@@ -63,10 +81,24 @@ export default function Home() {
                     <ImportQuestionBank data={data} setData={setData} />
                   </StepperPanel>
                 ),
+                // "2": () => (
+                //   <StepperPanel>
+                //     <QuestionOption data={data} setData={setData} />
+                //   </StepperPanel>
+                // ),
+                "3": () => (
+                  <StepperPanel>
+                    <GenerateQuestions data={data} />
+                  </StepperPanel>
+                ),
               })}
               <StepperControls>
-                {!methods.isFirst && (
-                  <Button variant='secondary' onClick={methods.prev}>
+                {!methods.isLast && (
+                  <Button
+                    variant='secondary'
+                    onClick={methods.prev}
+                    disabled={methods.isFirst}
+                  >
                     <ArrowLeft />
                     Quay lại
                   </Button>
@@ -74,8 +106,8 @@ export default function Home() {
                 <Button onClick={methods.isLast ? methods.reset : methods.next}>
                   {methods.isLast ? (
                     <>
-                      <ArrowLeft />
-                      Quay lại
+                      <X />
+                      Hủy bỏ
                     </>
                   ) : (
                     <>

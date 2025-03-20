@@ -1,10 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { CommandList } from "cmdk";
 
-import { cn } from "@/lib/utils";
-import { useParseCsv } from "@/hooks/use-parse-csv";
+import { CommandList } from "cmdk";
+import { ArrowLeft, Check, ChevronDown, Sheet, Upload, X } from "lucide-react";
+
+import { FileUploader } from "@/components/file-uploader";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -37,8 +38,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FileUploader } from "@/components/file-uploader";
-import { ArrowLeft, ChevronDown, Check, Sheet, Upload, X } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+
+import { useParseCsv } from "@/hooks/use-parse-csv";
 
 interface CsvImporterProps
   extends React.ComponentPropsWithoutRef<typeof DialogTrigger>,

@@ -1,4 +1,4 @@
-export type Quiz = {
+export type Question = {
   id: string;
   question: string;
   answerA: string;
@@ -8,4 +8,4 @@ export type Quiz = {
   correctAnswer: string;
 };
 
-export type QuizList = Quiz[];
+export type QuestionList = Question[];
