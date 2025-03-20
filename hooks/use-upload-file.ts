@@ -1,31 +1,36 @@
-import * as React from "react"
-import type { UploadedFile } from "@/types"
-import { toast } from "sonner"
-import type { UploadFilesOptions } from "uploadthing/types"
+import * as React from "react";
+import type { UploadedFile } from "@/types";
+import { toast } from "sonner";
+import type { AnyFileRoute, UploadFilesOptions } from "uploadthing/types";
 
-import { getErrorMessage } from "@/lib/handle-error"
-import { uploadFiles } from "@/lib/uploadthing"
-import { type OurFileRouter } from "@/app/api/uploadthing/core"
+import { getErrorMessage } from "@/lib/handle-error";
+import { uploadFiles } from "@/lib/uploadthing";
+import { type OurFileRouter } from "@/app/api/uploadthing/core";
 
-interface UseUploadFileProps
+interface UseUploadFileOptions<TFileRoute extends AnyFileRoute>
   extends Pick<
-    UploadFilesOptions<OurFileRouter, keyof OurFileRouter>,
+    UploadFilesOptions<TFileRoute>,
     "headers" | "onUploadBegin" | "onUploadProgress" | "skipPolling"
   > {
-  defaultUploadedFiles?: UploadedFile[]
+  defaultUploadedFiles?: UploadedFile[];
 }
 
 export function useUploadFile(
   endpoint: keyof OurFileRouter,
-  { defaultUploadedFiles = [], ...props }: UseUploadFileProps = {}
+  {
+    defaultUploadedFiles = [],
+    ...props
+  }: UseUploadFileOptions<OurFileRouter[keyof OurFileRouter]> = {},
 ) {
   const [uploadedFiles, setUploadedFiles] =
-    React.useState<UploadedFile[]>(defaultUploadedFiles)
-  const [progresses, setProgresses] = React.useState<Record<string, number>>({})
-  const [isUploading, setIsUploading] = React.useState(false)
+    React.useState<UploadedFile[]>(defaultUploadedFiles);
+  const [progresses, setProgresses] = React.useState<Record<string, number>>(
+    {},
+  );
+  const [isUploading, setIsUploading] = React.useState(false);
 
   async function onUpload(files: File[]) {
-    setIsUploading(true)
+    setIsUploading(true);
     try {
       const res = await uploadFiles(endpoint, {
         ...props,
@@ -34,18 +39,18 @@ export function useUploadFile(
           setProgresses((prev) => {
             return {
               ...prev,
-              [file]: progress ?? 0,
-            }
-          })
+              [file.name]: progress,
+            };
+          });
         },
-      })
+      });
 
-      setUploadedFiles((prev) => (prev ? [...prev, ...res] : res))
+      setUploadedFiles((prev) => (prev ? [...prev, ...res] : res));
     } catch (err) {
-      toast.error(getErrorMessage(err))
+      toast.error(getErrorMessage(err));
     } finally {
-      setProgresses({})
-      setIsUploading(false)
+      setProgresses({});
+      setIsUploading(false);
     }
   }
 
@@ -54,5 +59,5 @@ export function useUploadFile(
     uploadedFiles,
     progresses,
     isUploading,
-  }
+  };
 }

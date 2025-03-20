@@ -67,22 +67,22 @@ export function QuizTable({
           <TableBody>
             {data.map((item) => (
               <TableRow key={item.id}>
-                <TableCell className='font-medium'>
+                <TableCell className='font-medium max-w-32'>
                   <span className='line-clamp-1'>{item.question}</span>
                 </TableCell>
-                <TableCell>
+                <TableCell className='max-w-24'>
                   <span className='line-clamp-1'>{item.answerA}</span>
                 </TableCell>
-                <TableCell>
+                <TableCell className='max-w-24'>
                   <span className='line-clamp-1'>{item.answerB}</span>
                 </TableCell>
-                <TableCell>
+                <TableCell className='max-w-24'>
                   <span className='line-clamp-1'>{item.answerC}</span>
                 </TableCell>
-                <TableCell>
+                <TableCell className='max-w-24'>
                   <span className='line-clamp-1'>{item.answerD}</span>
                 </TableCell>
-                <TableCell>
+                <TableCell className='max-w-24'>
                   <span className='line-clamp-1'>{item.correctAnswer}</span>
                 </TableCell>
               </TableRow>

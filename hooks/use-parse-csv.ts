@@ -1,53 +1,29 @@
-import * as React from "react"
-import * as Papa from "papaparse"
+import * as React from "react";
+import * as Papa from "papaparse";
 
-import { getErrorMessage } from "@/lib/handle-error"
+import { getErrorMessage } from "@/lib/handle-error";
 
 interface CsvState {
-  fileName: string
+  fileName: string;
   data: {
-    parsed: Record<string, unknown>[]
-    mapped: Record<string, unknown>[]
-  }
+    parsed: Record<string, unknown>[];
+    mapped: Record<string, unknown>[];
+  };
   fieldMappings: {
-    original: Record<string, string | undefined>
-    current: Record<string, string | undefined>
-  }
-  error: string | null
+    original: Record<string, string | undefined>;
+    current: Record<string, string | undefined>;
+  };
+  error: string | null;
 }
 
 interface UseParseCsvProps extends Papa.ParseConfig {
-  /**
-   * Array of field mappings defining the structure of the imported data.
-   * Each field includes a label, value, and optional required flag.
-   * @example fields={[{ label: 'Name', value: 'name', required: true }, { label: 'Email', value: 'email' }]}
-   */
-  fields: { label: string; value: string; required?: boolean }[]
-
-  /**
-   * Callback function invoked when data is successfully parsed.
-   * Receives an array of records representing the imported data.
-   * @example onSuccess={(data) => console.log(data)}
-   */
-  onSuccess?: (data: Record<string, unknown>[]) => void
-
-  /**
-   * Callback function invoked when an error occurs during parsing.
-   * Receives an error message.
-   * @example onError={(message) => console.error(message)}
-   */
-  onError?: (message: string) => void
-
-  /**
-   * Flag to indicate if empty fields should be shown.
-   * @default false
-   * @example showEmptyFields={true}
-   */
-  showEmptyFields?: boolean
+  fields: { label: string; value: string; required?: boolean }[];
+  onSuccess?: (data: Record<string, unknown>[]) => void;
+  onError?: (message: string) => void;
+  showEmptyFields?: boolean;
 }
 
 export function useParseCsv({
-  fields,
   onSuccess,
   onError,
   showEmptyFields,
@@ -64,11 +40,11 @@ export function useParseCsv({
       original: {},
     },
     error: null,
-  })
+  });
 
   function onParse({ file, limit = Infinity }: { file: File; limit?: number }) {
-    let count = 0
-    const allResults: Record<string, unknown>[] = []
+    let count = 0;
+    const allResults: Record<string, unknown>[] = [];
 
     Papa.parse<Record<string, unknown>>(file, {
       ...props,
@@ -79,10 +55,10 @@ export function useParseCsv({
         const parsedChunk = Papa.parse<string[]>(chunk, {
           header: false,
           skipEmptyLines: true,
-        })
+        });
 
-        const rows = parsedChunk.data
-        const columns = rows[0] ?? []
+        const rows = parsedChunk.data;
+        const columns = rows[0] ?? [];
 
         const newColumns = columns
           .map((column, index) => {
@@ -93,18 +69,18 @@ export function useParseCsv({
                   (row) =>
                     row[index] !== "" &&
                     row[index] !== null &&
-                    row[index] !== undefined
-                )
+                    row[index] !== undefined,
+                );
               if (!hasNonEmptyValue) {
-                return null
+                return null;
               }
             }
-            return column.trim() === "" ? `Field ${index + 1}` : column
+            return column.trim() === "" ? `Field ${index + 1}` : column;
           })
-          .filter((column) => column !== null)
+          .filter((column) => column !== null);
 
-        rows[0] = newColumns
-        return Papa.unparse(rows)
+        rows[0] = newColumns;
+        return Papa.unparse(rows);
       },
       step: (results, parser) => {
         try {
@@ -114,8 +90,8 @@ export function useParseCsv({
                 ...acc,
                 [field]: field,
               }),
-              {}
-            )
+              {},
+            );
 
             setCsvState((prevState) => ({
               ...prevState,
@@ -123,20 +99,20 @@ export function useParseCsv({
                 original: mappings,
                 current: mappings,
               },
-            }))
+            }));
           }
 
           if (count < limit) {
-            allResults.push(results.data)
-            count++
+            allResults.push(results.data);
+            count++;
           } else {
-            parser.abort()
-            throw new Error(`Only ${limit} rows are allowed`)
+            parser.abort();
+            throw new Error(`Only ${limit} rows are allowed`);
           }
         } catch (err) {
-          const message = getErrorMessage(err)
-          setCsvState((prevState) => ({ ...prevState, error: message }))
-          onError?.(message)
+          const message = getErrorMessage(err);
+          setCsvState((prevState) => ({ ...prevState, error: message }));
+          onError?.(message);
         }
       },
       complete: (_, localFile: File) => {
@@ -149,18 +125,18 @@ export function useParseCsv({
             parsed: allResults,
             mapped: allResults,
           },
-        }))
-        onSuccess?.(allResults)
+        }));
+        onSuccess?.(allResults);
       },
-    })
+    });
   }
 
   function onFieldChange({
     oldValue,
     newValue,
   }: {
-    oldValue: string
-    newValue: string
+    oldValue: string;
+    newValue: string;
   }) {
     setCsvState((prevState) => ({
       ...prevState,
@@ -175,15 +151,15 @@ export function useParseCsv({
           [newValue]: prevState.data.parsed[index]?.[oldValue],
         })),
       },
-    }))
+    }));
   }
 
   function onFieldToggle({
     value,
     checked,
   }: {
-    value: string
-    checked: boolean
+    value: string;
+    checked: boolean;
   }) {
     setCsvState((prevState) => ({
       ...prevState,
@@ -198,11 +174,11 @@ export function useParseCsv({
         ...prevState.data,
         mapped: prevState.data.mapped.map((row) => {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { [value]: _, ...rest } = row
-          return rest
+          const { [value]: _, ...rest } = row;
+          return rest;
         }),
       },
-    }))
+    }));
   }
 
   function onFieldsReset() {
@@ -216,7 +192,7 @@ export function useParseCsv({
         ...prevState.data,
         mapped: prevState.data.parsed,
       },
-    }))
+    }));
   }
 
   function getSanitizedData({ data }: { data: Record<string, unknown>[] }) {
@@ -226,9 +202,9 @@ export function useParseCsv({
           ...acc,
           [key]: row[key] === null ? "" : row[key],
         }),
-        {}
-      )
-    )
+        {},
+      ),
+    );
   }
 
   return {
@@ -241,5 +217,5 @@ export function useParseCsv({
     onFieldChange,
     onFieldToggle,
     onFieldsReset,
-  }
+  };
 }

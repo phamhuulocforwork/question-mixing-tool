@@ -20,13 +20,13 @@ const {
 } = defineStepper(
   {
     id: "1",
-    title: "1. Bộ câu hỏi",
+    title: "Bộ câu hỏi",
     description: "Tải lên bộ câu hỏi",
     icon: <Upload />,
   },
   {
     id: "2",
-    title: "2. Chọn câu hỏi",
+    title: "Chọn câu hỏi",
     description: "Chọn câu hỏi để trộn",
     icon: <MousePointerClick />,
   },

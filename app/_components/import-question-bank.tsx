@@ -8,7 +8,7 @@ export default function ImportQuestionBank({
   setData: React.Dispatch<React.SetStateAction<DataConfig["quiz"]>>;
 }) {
   return (
-    <div className='rounded-md border p-4'>
+    <div className='rounded-md shadow-xl border p-4'>
       <QuizTable data={data} setData={setData} />
     </div>
   );
