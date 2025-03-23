@@ -127,7 +127,7 @@ export default function UsageDrawer() {
               {tutorialSteps[currentStep].description}
             </div>
             {tutorialSteps[currentStep].image && (
-              <div className='overflow-hidden rounded-lg'>
+              <div className='overflow-hidden rounded-lg border shadow-md mb-4'>
                 <Image
                   src={tutorialSteps[currentStep].image}
                   alt={`Minh họa cho ${tutorialSteps[currentStep].title}`}
@@ -141,7 +141,6 @@ export default function UsageDrawer() {
 
           <DrawerFooter className='flex-row justify-between space-x-2 pt-2'>
             <Button
-              variant='outline'
               onClick={handlePrevious}
               disabled={currentStep === 0}
               className='flex-1'

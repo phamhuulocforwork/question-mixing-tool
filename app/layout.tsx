@@ -6,7 +6,7 @@ import { FloatingMenu } from "@/components/floating-menu";
 import { Toaster } from "@/components/ui/sonner";
 
 import { ThemeProvider } from "@/providers/providers";
-import "@/style/globals.css";
+import "@/styles/globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 

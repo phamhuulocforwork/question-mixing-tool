@@ -24,7 +24,10 @@ const Menu = () => {
           <Separator orientation='vertical' />
 
           <Button variant='outline' size='icon' className='cursor-pointer'>
-            <Link href='https://github.com/phamhuulocforwork/question-mixing-tool'>
+            <Link
+              target='_blank'
+              href='https://github.com/phamhuulocforwork/question-mixing-tool'
+            >
               <Github />
             </Link>
           </Button>
