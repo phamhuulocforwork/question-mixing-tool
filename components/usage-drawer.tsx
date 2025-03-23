@@ -28,7 +28,7 @@ const tutorialSteps: TutorialStep[] = [
   {
     title: "Bước 1. Chọn bộ câu hỏi",
     description: (
-      <p className='indent-4'>
+      <div className='indent-4'>
         Upload file CSV với các cột như hình dưới. Lần lượt là:{" "}
         <span className='font-bold'>
           {" "}
@@ -44,17 +44,17 @@ const tutorialSteps: TutorialStep[] = [
         </a>
         để tham khảo. Sau khi upload bạn có thể xem lại file CSV đã upload sau
         đó tiếp tục.
-      </p>
+      </div>
     ),
     image: "/step1.png",
   },
   {
     title: "Bước 2. Tạo đề, đáp án",
     description: (
-      <p className='indent-4'>
+      <div className='indent-4'>
         Sau khi upload file CSV, bạn có thể nhập số lượng mã đề muốn tạo và tải
         xuống file đề, đáp án.
-      </p>
+      </div>
     ),
     image: "/step2.png",
   },
@@ -123,9 +123,9 @@ export default function UsageDrawer() {
           </DrawerHeader>
 
           <div className='p-4 pb-0'>
-            <p className='mb-4 text-sm text-foreground'>
+            <div className='mb-4 text-sm text-foreground'>
               {tutorialSteps[currentStep].description}
-            </p>
+            </div>
             {tutorialSteps[currentStep].image && (
               <div className='overflow-hidden rounded-lg'>
                 <Image
