@@ -6,7 +6,7 @@ import {
   ArrowLeft,
   ArrowRight,
   File,
-  // MousePointerClick,
+  MousePointerClick,
   Upload,
   X,
 } from "lucide-react";
@@ -14,11 +14,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { defineStepper } from "@/components/ui/stepper";
 
-// import QuestionOption from "./_components/question-option";
 import { initialData } from "@/config/data";
 
 import GenerateQuestions from "./_components/generate-questions";
 import ImportQuestionBank from "./_components/import-question-bank";
+import QuestionOption from "./_components/question-option";
 
 const {
   StepperProvider,
@@ -35,12 +35,12 @@ const {
     description: "Tải lên bộ câu hỏi",
     icon: <Upload />,
   },
-  // {
-  //   id: "2",
-  //   title: "Tùy chọn",
-  //   description: "Tùy chọn thêm",
-  //   icon: <MousePointerClick />,
-  // },
+  {
+    id: "2",
+    title: "Tùy chọn",
+    description: "Tùy chọn thêm",
+    icon: <MousePointerClick />,
+  },
   {
     id: "3",
     title: "Tạo đề, đáp án",
@@ -81,11 +81,11 @@ export default function Home() {
                     <ImportQuestionBank data={data} setData={setData} />
                   </StepperPanel>
                 ),
-                // "2": () => (
-                //   <StepperPanel>
-                //     <QuestionOption data={data} setData={setData} />
-                //   </StepperPanel>
-                // ),
+                "2": () => (
+                  <StepperPanel>
+                    <QuestionOption data={data} setData={setData} />
+                  </StepperPanel>
+                ),
                 "3": () => (
                   <StepperPanel>
                     <GenerateQuestions data={data} />
