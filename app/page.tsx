@@ -14,6 +14,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { defineStepper } from "@/components/ui/stepper";
 
+import useIsMobile from "@/hooks/use-mobile";
+
 import { initialData } from "@/config/data";
 
 import GenerateQuestions from "./_components/generate-questions";
@@ -52,14 +54,19 @@ const {
 
 export default function Home() {
   const [data, setData] = React.useState(initialData);
+  const isMobile = useIsMobile();
 
   return (
-    <div className='flex w-full items-start my-16 justify-center'>
+    <div className='flex w-full items-start my-24 justify-center'>
       <div className='container flex flex-col items-center gap-4 justify-center'>
         <h1 className='text-2xl mb-8 text-center font-bold uppercase'>
           CÔNG CỤ TRỘN CÂU HỎI TRẮC NGHIỆM, TẠO ĐỀ THI
         </h1>
-        <StepperProvider className='space-y-4' variant='horizontal'>
+        <StepperProvider
+          className='space-y-4'
+          variant={isMobile ? "vertical" : "horizontal"}
+          labelOrientation={isMobile ? "horizontal" : "vertical"}
+        >
           {({ methods }) => (
             <React.Fragment>
               <StepperNavigation className='mx-0 lg:mx-16'>
@@ -71,27 +78,39 @@ export default function Home() {
                     icon={step.icon}
                   >
                     <StepperTitle>{step.title}</StepperTitle>
-                    <StepperDescription>{step.description}</StepperDescription>
+                    {isMobile &&
+                      methods.when(step.id, () => (
+                        <StepperPanel>
+                          {/* {step.id === "1" && (
+                            <ImportQuestionBank data={data} setData={setData} />
+                          )} */}
+                          {step.id === "2" && (
+                            <QuestionOption data={data} setData={setData} />
+                          )}
+                          {step.id === "3" && <GenerateQuestions data={data} />}
+                        </StepperPanel>
+                      ))}
                   </StepperStep>
                 ))}
               </StepperNavigation>
-              {methods.switch({
-                "1": () => (
-                  <StepperPanel>
-                    <ImportQuestionBank data={data} setData={setData} />
-                  </StepperPanel>
-                ),
-                "2": () => (
-                  <StepperPanel>
-                    <QuestionOption data={data} setData={setData} />
-                  </StepperPanel>
-                ),
-                "3": () => (
-                  <StepperPanel>
-                    <GenerateQuestions data={data} />
-                  </StepperPanel>
-                ),
-              })}
+              {!isMobile &&
+                methods.switch({
+                  "1": () => (
+                    <StepperPanel>
+                      <ImportQuestionBank data={data} setData={setData} />
+                    </StepperPanel>
+                  ),
+                  "2": () => (
+                    <StepperPanel>
+                      <QuestionOption data={data} setData={setData} />
+                    </StepperPanel>
+                  ),
+                  "3": () => (
+                    <StepperPanel>
+                      <GenerateQuestions data={data} />
+                    </StepperPanel>
+                  ),
+                })}
               <StepperControls>
                 {!methods.isLast && (
                   <Button

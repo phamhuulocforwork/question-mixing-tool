@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Upload } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -13,8 +11,8 @@ interface TemplateOptions {
   useCustomTemplate: boolean;
   questionTemplate: File | null;
   answerTemplate: File | null;
-  zipDownload: boolean;
   columnCount: number;
+  numberOfVariants: number;
 }
 
 export default function QuestionOption({
@@ -28,21 +26,21 @@ export default function QuestionOption({
     useCustomTemplate: false,
     questionTemplate: null,
     answerTemplate: null,
-    zipDownload: true,
     columnCount: 4,
+    numberOfVariants: 1,
   });
 
   useEffect(() => {
     const optionsToSave = {
       useCustomTemplate: templateOptions.useCustomTemplate,
-      zipDownload: templateOptions.zipDownload,
       columnCount: templateOptions.columnCount,
+      numberOfVariants: templateOptions.numberOfVariants,
     };
     localStorage.setItem("questionOptions", JSON.stringify(optionsToSave));
   }, [
     templateOptions.useCustomTemplate,
-    templateOptions.zipDownload,
     templateOptions.columnCount,
+    templateOptions.numberOfVariants,
   ]);
 
   const handleQuestionTemplateChange = (
@@ -74,13 +72,6 @@ export default function QuestionOption({
     });
   };
 
-  const handleZipToggle = (checked: boolean) => {
-    setTemplateOptions({
-      ...templateOptions,
-      zipDownload: checked,
-    });
-  };
-
   const handleColumnCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (value >= 1 && value <= 8) {
@@ -91,97 +82,65 @@ export default function QuestionOption({
     }
   };
 
-  const renderColumnExampleTable = () => {
-    const columns = [];
-    for (let i = 0; i < templateOptions.columnCount; i++) {
-      columns.push(
-        <div key={i} className='flex gap-2'>
-          <div className='px-2 py-0.5 rounded-sm border flex items-center justify-center text-center text-nowrap'>
-            Câu
-          </div>
-          <div className='px-2 py-0.5 rounded-sm border flex items-center justify-center text-center text-nowrap'>
-            Đáp án
-          </div>
-        </div>,
-      );
+  const handleNumberOfVariantsChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const value = parseInt(e.target.value);
+    if (value >= 1 && value <= 20) {
+      setTemplateOptions({
+        ...templateOptions,
+        numberOfVariants: value,
+      });
     }
-
-    return (
-      <div className='mt-4 border p-4 rounded-md'>
-        <h3 className='text-sm font-medium mb-2'>
-          Xem trước bố cục bảng đáp án:
-        </h3>
-        <div className='flex flex-wrap gap-4 justify-center'>{columns}</div>
-      </div>
-    );
   };
 
   return (
-    <div className='rounded-md shadow-xl border p-4 space-y-4'>
-      <div className='space-y-2'>
-        <h2 className='text-xl font-bold'>Tùy chọn mẫu đề thi</h2>
-        <p className='text-sm text-muted-foreground'>
-          Tùy chỉnh cách hiển thị câu hỏi và đáp án trong đề thi
+    <div className='rounded-md shadow-xl border p-8 space-y-4'>
+      <div className='space-y-0.5'>
+        <h2 className='text-lg font-bold'>Mẫu đề thi & mẫu đáp án</h2>
+        <p className='text-xs text-muted-foreground'>
+          Nếu không có mẫu tùy chỉnh, sẽ sử dụng mẫu mặc định
         </p>
         <div className='space-y-4 py-4'>
           <div className='flex items-center space-x-2'>
-            <input
-              type='checkbox'
+            <Checkbox
               id='use-custom-template'
               checked={templateOptions.useCustomTemplate}
-              onChange={(e) => handleTemplateToggle(e.target.checked)}
+              onCheckedChange={handleTemplateToggle}
             />
-            <Label htmlFor='use-custom-template'>
-              Sử dụng mẫu đề thi tùy chỉnh
-            </Label>
+            <Label htmlFor='use-custom-template'>Sử dụng mẫu tùy chỉnh</Label>
           </div>
 
           {templateOptions.useCustomTemplate && (
             <div className='space-y-4 mt-4 pl-6'>
-              <div className='space-y-2'>
-                <Label htmlFor='question-template'>Mẫu câu hỏi</Label>
-                <div className='flex items-center gap-2'>
+              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                <div className='space-y-2'>
+                  <Label htmlFor='question-template'>Mẫu câu hỏi</Label>
                   <Input
                     id='question-template'
                     type='file'
                     accept='.docx'
                     onChange={handleQuestionTemplateChange}
+                    className='cursor-pointer'
                   />
-                  <Button
-                    size='icon'
-                    variant='outline'
-                    className='shrink-0'
-                    disabled={!templateOptions.questionTemplate}
-                  >
-                    <Upload className='h-4 w-4' />
-                  </Button>
+                  <p className='text-sm text-muted-foreground'>
+                    Tải lên file Word (.docx) làm mẫu hiển thị câu hỏi
+                  </p>
                 </div>
-                <p className='text-sm text-muted-foreground'>
-                  Tải lên file Word (.docx) làm mẫu hiển thị câu hỏi
-                </p>
-              </div>
 
-              <div className='space-y-2'>
-                <Label htmlFor='answer-template'>Mẫu đáp án</Label>
-                <div className='flex items-center gap-2'>
+                <div className='space-y-2'>
+                  <Label htmlFor='answer-template'>Mẫu đáp án</Label>
                   <Input
                     id='answer-template'
                     type='file'
                     accept='.docx'
                     onChange={handleAnswerTemplateChange}
+                    className='cursor-pointer'
                   />
-                  <Button
-                    size='icon'
-                    variant='outline'
-                    className='shrink-0'
-                    disabled={!templateOptions.answerTemplate}
-                  >
-                    <Upload className='h-4 w-4' />
-                  </Button>
+                  <p className='text-sm text-muted-foreground'>
+                    Tải lên file Word (.docx) làm mẫu hiển thị đáp án
+                  </p>
                 </div>
-                <p className='text-sm text-muted-foreground'>
-                  Tải lên file Word (.docx) làm mẫu hiển thị đáp án
-                </p>
               </div>
             </div>
           )}
@@ -190,43 +149,34 @@ export default function QuestionOption({
 
       <Separator className='my-4' />
 
-      <div className='space-y-2'>
-        <h2 className='text-xl font-bold'>Tùy chọn xuất file</h2>
-        <p className='text-sm text-muted-foreground'>
-          Tùy chỉnh cách xuất file đề thi và đáp án
+      <div className='space-y-0.5'>
+        <h2 className='text-lg font-bold'>Số lượng và bố cục</h2>
+        <p className='text-xs text-muted-foreground'>
+          Tùy chỉnh số lượng mã đề được tạo ra và bố cục bảng đáp án
         </p>
-        <div className='space-y-4 py-4'>
-          <div className='flex items-center space-x-2'>
-            <input
-              type='checkbox'
-              id='zip-download'
-              checked={templateOptions.zipDownload}
-              onChange={(e) => handleZipToggle(e.target.checked)}
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-4'>
+          <div className='space-y-2 w-full'>
+            <Label htmlFor='number-of-variants'>Số lượng mã đề</Label>
+            <Input
+              id='number-of-variants'
+              type='number'
+              min={1}
+              max={20}
+              value={templateOptions.numberOfVariants}
+              onChange={handleNumberOfVariantsChange}
             />
-            <Label htmlFor='zip-download'>
-              Nén tất cả đề thi thành file ZIP khi tải xuống
-            </Label>
           </div>
 
-          <Separator className='my-4' />
-
-          <div className='space-y-2'>
+          <div className='space-y-2 w-full'>
             <Label htmlFor='column-count'>Số cột trong bảng đáp án</Label>
-            <div className='flex items-center gap-2'>
-              <Input
-                id='column-count'
-                type='number'
-                min={1}
-                max={8}
-                value={templateOptions.columnCount}
-                onChange={handleColumnCountChange}
-                className='w-24'
-              />
-            </div>
-            <p className='text-sm text-muted-foreground'>
-              Điều chỉnh số cột hiển thị trong bảng đáp án (từ 1 đến 8)
-            </p>
-            {renderColumnExampleTable()}
+            <Input
+              id='column-count'
+              type='number'
+              min={1}
+              max={8}
+              value={templateOptions.columnCount}
+              onChange={handleColumnCountChange}
+            />
           </div>
         </div>
       </div>

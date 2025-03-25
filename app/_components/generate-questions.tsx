@@ -17,8 +17,6 @@ import JSZip from "jszip";
 import { Download } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import {
   generateAnswerKeys,
@@ -27,9 +25,7 @@ import {
 
 import { QuestionList } from "@/types";
 
-// Thêm các tùy chọn cho việc tạo câu hỏi
 interface GenerateOptions {
-  numberOfVariants: number;
   useCustomTemplate: boolean;
   useZipDownload: boolean;
   columnCount: number;
@@ -37,13 +33,13 @@ interface GenerateOptions {
 
 export default function GenerateQuestions({ data }: { data: QuestionList }) {
   const [options, setOptions] = useState<GenerateOptions>({
-    numberOfVariants: 1,
     useCustomTemplate: false,
     useZipDownload: true,
     columnCount: 4,
   });
 
-  // Lấy tùy chọn từ localStorage nếu có
+  const [numberOfVariants, setNumberOfVariants] = useState<number>(1);
+
   React.useEffect(() => {
     const savedOptions = localStorage.getItem("questionOptions");
     if (savedOptions) {
@@ -55,6 +51,10 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
           useZipDownload: parsedOptions.zipDownload || true,
           columnCount: parsedOptions.columnCount || 4,
         }));
+
+        if (parsedOptions.numberOfVariants) {
+          setNumberOfVariants(parsedOptions.numberOfVariants);
+        }
       } catch (error) {
         console.error("Failed to parse saved options", error);
       }
@@ -167,11 +167,11 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
   };
 
   const handleSubmit = async () => {
-    const variants = generateQuestionVariants(data, options.numberOfVariants);
+    const variants = generateQuestionVariants(data, numberOfVariants);
     const answerKeys = generateAnswerKeys(variants);
 
     // Nếu sử dụng nén ZIP và có nhiều hơn 1 đề
-    if (options.useZipDownload && options.numberOfVariants > 1) {
+    if (options.useZipDownload && numberOfVariants > 1) {
       const zip = new JSZip();
 
       for (
@@ -362,30 +362,9 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
   };
 
   return (
-    <div className='rounded-md shadow-xl border p-4 space-y-4 flex flex-col items-center justify-center'>
-      <div className='space-y-2 min-w-xl'>
-        <Label htmlFor='number-of-variants'>Số lượng mã đề</Label>
-        <div className='flex items-center gap-2'>
-          <Input
-            id='number-of-variants'
-            type='number'
-            min={1}
-            max={20}
-            value={options.numberOfVariants}
-            onChange={(e) =>
-              setOptions({
-                ...options,
-                numberOfVariants: parseInt(e.target.value) || 1,
-              })
-            }
-            className='w-full max-w-xs'
-          />
-          <Button onClick={handleSubmit}>
-            <Download />
-            Tải xuống
-          </Button>
-        </div>
-      </div>
-    </div>
+    <Button onClick={handleSubmit}>
+      <Download />
+      Tải xuống
+    </Button>
   );
 }
