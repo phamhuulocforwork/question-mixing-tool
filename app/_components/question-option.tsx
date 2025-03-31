@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
+import { useQuestionOptions } from "@/providers/question-options-provider";
 import { QuestionList } from "@/types";
-
-interface TemplateOptions {
-  useCustomTemplate: boolean;
-  questionTemplate: File | null;
-  answerTemplate: File | null;
-  columnCount: number;
-  numberOfVariants: number;
-}
 
 export default function QuestionOption({
   data,
@@ -22,35 +15,13 @@ export default function QuestionOption({
   data: QuestionList;
   setData: React.Dispatch<React.SetStateAction<QuestionList>>;
 }) {
-  const [templateOptions, setTemplateOptions] = useState<TemplateOptions>({
-    useCustomTemplate: false,
-    questionTemplate: null,
-    answerTemplate: null,
-    columnCount: 4,
-    numberOfVariants: 1,
-  });
-
-  useEffect(() => {
-    const optionsToSave = {
-      useCustomTemplate: templateOptions.useCustomTemplate,
-      columnCount: templateOptions.columnCount,
-      numberOfVariants: templateOptions.numberOfVariants,
-    };
-    localStorage.setItem("questionOptions", JSON.stringify(optionsToSave));
-  }, [
-    templateOptions.useCustomTemplate,
-    templateOptions.columnCount,
-    templateOptions.numberOfVariants,
-  ]);
+  const { options, updateOptions, saveTemplateFile } = useQuestionOptions();
 
   const handleQuestionTemplateChange = (
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (e.target.files && e.target.files[0]) {
-      setTemplateOptions({
-        ...templateOptions,
-        questionTemplate: e.target.files[0],
-      });
+      saveTemplateFile("questionTemplate", e.target.files[0]);
     }
   };
 
@@ -58,27 +29,18 @@ export default function QuestionOption({
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (e.target.files && e.target.files[0]) {
-      setTemplateOptions({
-        ...templateOptions,
-        answerTemplate: e.target.files[0],
-      });
+      saveTemplateFile("answerTemplate", e.target.files[0]);
     }
   };
 
   const handleTemplateToggle = (checked: boolean) => {
-    setTemplateOptions({
-      ...templateOptions,
-      useCustomTemplate: checked,
-    });
+    updateOptions({ useCustomTemplate: checked });
   };
 
   const handleColumnCountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (value >= 1 && value <= 8) {
-      setTemplateOptions({
-        ...templateOptions,
-        columnCount: value,
-      });
+      updateOptions({ columnCount: value });
     }
   };
 
@@ -87,11 +49,12 @@ export default function QuestionOption({
   ) => {
     const value = parseInt(e.target.value);
     if (value >= 1 && value <= 20) {
-      setTemplateOptions({
-        ...templateOptions,
-        numberOfVariants: value,
-      });
+      updateOptions({ numberOfVariants: value });
     }
+  };
+
+  const handleZipDownloadToggle = (checked: boolean) => {
+    updateOptions({ zipDownload: checked });
   };
 
   return (
@@ -105,13 +68,13 @@ export default function QuestionOption({
           <div className='flex items-center space-x-2'>
             <Checkbox
               id='use-custom-template'
-              checked={templateOptions.useCustomTemplate}
+              checked={options.useCustomTemplate}
               onCheckedChange={handleTemplateToggle}
             />
             <Label htmlFor='use-custom-template'>Sử dụng mẫu tùy chỉnh</Label>
           </div>
 
-          {templateOptions.useCustomTemplate && (
+          {options.useCustomTemplate && (
             <div className='space-y-4 mt-4 pl-6'>
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                 <div className='space-y-2'>
@@ -126,6 +89,11 @@ export default function QuestionOption({
                   <p className='text-sm text-muted-foreground'>
                     Tải lên file Word (.docx) làm mẫu hiển thị câu hỏi
                   </p>
+                  {options.hasQuestionTemplate && (
+                    <p className='text-xs text-green-600'>
+                      Đã tải lên mẫu câu hỏi
+                    </p>
+                  )}
                 </div>
 
                 <div className='space-y-2'>
@@ -140,6 +108,11 @@ export default function QuestionOption({
                   <p className='text-sm text-muted-foreground'>
                     Tải lên file Word (.docx) làm mẫu hiển thị đáp án
                   </p>
+                  {options.hasAnswerTemplate && (
+                    <p className='text-xs text-green-600'>
+                      Đã tải lên mẫu đáp án
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -162,7 +135,7 @@ export default function QuestionOption({
               type='number'
               min={1}
               max={20}
-              value={templateOptions.numberOfVariants}
+              value={options.numberOfVariants}
               onChange={handleNumberOfVariantsChange}
             />
           </div>
@@ -174,9 +147,30 @@ export default function QuestionOption({
               type='number'
               min={1}
               max={8}
-              value={templateOptions.columnCount}
+              value={options.columnCount}
               onChange={handleColumnCountChange}
             />
+          </div>
+        </div>
+      </div>
+
+      <Separator className='my-4' />
+
+      <div className='space-y-0.5'>
+        <h2 className='text-lg font-bold'>Tùy chọn tải xuống</h2>
+        <p className='text-xs text-muted-foreground'>
+          Cấu hình cách thức tải xuống đề thi và đáp án
+        </p>
+        <div className='space-y-4 py-4'>
+          <div className='flex items-center space-x-2'>
+            <Checkbox
+              id='use-zip-download'
+              checked={options.zipDownload}
+              onCheckedChange={handleZipDownloadToggle}
+            />
+            <Label htmlFor='use-zip-download'>
+              Nén tất cả file vào một file ZIP
+            </Label>
           </div>
         </div>
       </div>

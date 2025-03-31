@@ -29,7 +29,6 @@ const {
   StepperPanel,
   StepperStep,
   StepperTitle,
-  StepperDescription,
 } = defineStepper(
   {
     id: "1",
@@ -81,9 +80,9 @@ export default function Home() {
                     {isMobile &&
                       methods.when(step.id, () => (
                         <StepperPanel>
-                          {/* {step.id === "1" && (
+                          {step.id === "1" && (
                             <ImportQuestionBank data={data} setData={setData} />
-                          )} */}
+                          )}
                           {step.id === "2" && (
                             <QuestionOption data={data} setData={setData} />
                           )}

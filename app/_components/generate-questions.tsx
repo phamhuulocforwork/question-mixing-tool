@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import {
   AlignmentType,
@@ -23,53 +23,19 @@ import {
   generateQuestionVariants,
 } from "@/lib/question-mixer";
 
+import { useQuestionOptions } from "@/providers/question-options-provider";
 import { QuestionList } from "@/types";
 
-interface GenerateOptions {
-  useCustomTemplate: boolean;
-  useZipDownload: boolean;
-  columnCount: number;
-}
-
 export default function GenerateQuestions({ data }: { data: QuestionList }) {
-  const [options, setOptions] = useState<GenerateOptions>({
-    useCustomTemplate: false,
-    useZipDownload: true,
-    columnCount: 4,
-  });
-
-  const [numberOfVariants, setNumberOfVariants] = useState<number>(1);
-
-  React.useEffect(() => {
-    const savedOptions = localStorage.getItem("questionOptions");
-    if (savedOptions) {
-      try {
-        const parsedOptions = JSON.parse(savedOptions);
-        setOptions((prev) => ({
-          ...prev,
-          useCustomTemplate: parsedOptions.useCustomTemplate || false,
-          useZipDownload: parsedOptions.zipDownload || true,
-          columnCount: parsedOptions.columnCount || 4,
-        }));
-
-        if (parsedOptions.numberOfVariants) {
-          setNumberOfVariants(parsedOptions.numberOfVariants);
-        }
-      } catch (error) {
-        console.error("Failed to parse saved options", error);
-      }
-    }
-  }, []);
+  const { options } = useQuestionOptions();
 
   const createAnswerTable = (answers: string[]) => {
     const rows: TableRow[] = [];
     const totalQuestions = answers.length;
 
-    // Sử dụng columnCount từ tùy chọn người dùng
     const columns = options.columnCount;
     const questionsPerColumn = Math.ceil(totalQuestions / columns);
 
-    // Tạo hàng tiêu đề
     const headerCells: TableCell[] = [];
     for (let i = 0; i < columns; i++) {
       headerCells.push(
@@ -110,7 +76,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
     });
     rows.push(headerRow);
 
-    // Tạo các hàng dữ liệu
     for (let i = 0; i < questionsPerColumn; i++) {
       const cells: TableCell[] = [];
 
@@ -148,7 +113,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
       rows.push(new TableRow({ children: cells }));
     }
 
-    // Tạo đối tượng bảng với widths tự động điều chỉnh theo số cột
     const columnWidths = Array(columns * 2).fill(100 / (columns * 2));
 
     return new Table({
@@ -167,11 +131,10 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
   };
 
   const handleSubmit = async () => {
-    const variants = generateQuestionVariants(data, numberOfVariants);
+    const variants = generateQuestionVariants(data, options.numberOfVariants);
     const answerKeys = generateAnswerKeys(variants);
 
-    // Nếu sử dụng nén ZIP và có nhiều hơn 1 đề
-    if (options.useZipDownload && numberOfVariants > 1) {
+    if (options.zipDownload && options.numberOfVariants > 1) {
       const zip = new JSZip();
 
       for (
@@ -183,7 +146,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
         const questions = variants[variantIndex];
         const answers = answerKeys[variantNumber];
 
-        // Tạo đề thi
         const questionDoc = createQuestionDocument(questions, variantNumber);
         const questionBlob = await Packer.toBlob(questionDoc);
         zip.file(
@@ -191,7 +153,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
           questionBlob,
         );
 
-        // Tạo đáp án
         const answerDoc = createAnswerDocument(answers, variantNumber);
         const answerBlob = await Packer.toBlob(answerDoc);
         zip.file(
@@ -200,16 +161,13 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
         );
       }
 
-      // Tạo và tải xuống file zip
       const zipBlob = await zip.generateAsync({ type: "blob" });
       saveAs(zipBlob, "de-thi-va-dap-an.zip");
     } else {
-      // Cách cũ nếu không sử dụng ZIP
       variants.forEach((questions, variantIndex) => {
         const variantNumber = variantIndex + 1;
         const answers = answerKeys[variantNumber];
 
-        // Tạo và tải xuống đề thi
         const questionDoc = createQuestionDocument(questions, variantNumber);
         Packer.toBlob(questionDoc).then((blob) => {
           saveAs(
@@ -218,7 +176,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
           );
         });
 
-        // Tạo và tải xuống đáp án
         const answerDoc = createAnswerDocument(answers, variantNumber);
         Packer.toBlob(answerDoc).then((blob) => {
           saveAs(
@@ -230,31 +187,12 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
     }
   };
 
-  // Tạo tài liệu đề thi
   const createQuestionDocument = (
     questions: QuestionList,
     variantNumber: number,
   ) => {
     const children: Paragraph[] = [];
 
-    // Thêm tiêu đề
-    children.push(
-      new Paragraph({
-        children: [
-          new TextRun({
-            text: `ĐỀ THI TRẮC NGHIỆM - MÃ ĐỀ ${variantNumber.toString().padStart(3, "0")}`,
-            bold: true,
-            size: 28,
-          }),
-        ],
-        alignment: AlignmentType.CENTER,
-        spacing: {
-          after: 400,
-        },
-      }),
-    );
-
-    // Thêm các câu hỏi
     questions.forEach((question, qIndex) => {
       children.push(
         new Paragraph({
@@ -320,7 +258,6 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
     });
   };
 
-  // Tạo tài liệu đáp án
   const createAnswerDocument = (answers: string[], variantNumber: number) => {
     return new Document({
       styles: {
@@ -340,22 +277,7 @@ export default function GenerateQuestions({ data }: { data: QuestionList }) {
       },
       sections: [
         {
-          children: [
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `ĐÁP ÁN ĐỀ THI - MÃ ĐỀ ${variantNumber.toString().padStart(3, "0")}`,
-                  bold: true,
-                  size: 28,
-                }),
-              ],
-              alignment: AlignmentType.CENTER,
-              spacing: {
-                after: 400,
-              },
-            }),
-            createAnswerTable(answers),
-          ],
+          children: [createAnswerTable(answers)],
         },
       ],
     });

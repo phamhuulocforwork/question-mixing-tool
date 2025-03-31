@@ -5,8 +5,9 @@ import { Inter } from "next/font/google";
 import { FloatingMenu } from "@/components/floating-menu";
 import { Toaster } from "@/components/ui/sonner";
 
-import { ThemeProvider } from "@/providers/providers";
 import "@/styles/globals.css";
+
+import { Providers } from "@/providers/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -94,15 +95,10 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className} antialiased relative`}>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
+        <Providers>
           {children}
           <FloatingMenu />
-        </ThemeProvider>
+        </Providers>
         <Toaster />
       </body>
     </html>
